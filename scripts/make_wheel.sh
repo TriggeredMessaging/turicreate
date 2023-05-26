@@ -389,7 +389,7 @@ function package_wheel() {
   }
 
   # Run the setup
-  package_wheel_helper 0 ""
+  #package_wheel_helper 0 ""
   package_wheel_helper 1 +minimal
 
   echo -e "\n\n================= Done Packaging Wheel  ================\n\n"
