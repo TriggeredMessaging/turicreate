@@ -24,7 +24,6 @@ RUN yum -y update && \
                libX11-devel \
                sqlite-devel \
                gcc \
-               gcc-multilib \
                glibc-devel \
                ccache \
                tk-devel \
@@ -34,7 +33,7 @@ RUN yum -y update && \
                file \
                xz
 
-RUN yum install -y wget tar make flex gcc gcc-c++ gcc-devel.s390 binutils-devel bzip2
+RUN yum install -y wget tar make flex gcc gcc-c++ binutils-devel bzip2
 ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 RUN mkdir /src
 WORKDIR /src
@@ -53,10 +52,10 @@ RUN make install
 # The built-in SSL is so old it can't talk to anything on the internet anymore
 # (so even get-pip.py doesn't work!)
 WORKDIR /src
-RUN curl -O https://www.openssl.org/source/openssl-1.1.0j.tar.gz
-RUN tar xf openssl-1.1.0j.tar.gz
+RUN curl -O https://www.openssl.org/source/old/1.1.1/openssl-1.1.1s.tar.gz
+RUN tar xf openssl-1.1.1s.tar.gz
 RUN mkdir -p /etc/ssl/certs/
-WORKDIR /src/openssl-1.1.0j
+WORKDIR /src/openssl-1.1.1s
 RUN ./config --prefix=/usr/local --openssldir=/usr/local && \
     make -j4 --quiet && \
     make install && \
@@ -89,60 +88,60 @@ RUN ./configure --prefix=/usr/local && \
     ldconfig && \
     rm -rf /src/libffi-3.2.1*
 
-# Install Python 2.7 from source
-WORKDIR /src
-RUN curl -O https://www.python.org/ftp/python/2.7.15/Python-2.7.15.tgz
-RUN tar xf Python-2.7.15.tgz
-WORKDIR /src/Python-2.7.15
-RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-loadable-sqlite-extensions && \
-    make -j4 --quiet && \
-    make install && \
-    ldconfig && \
-    rm -rf /src/Python-2.7.15*
-
-# Install Python 3.5 from source
-WORKDIR /src
-RUN curl -O https://www.python.org/ftp/python/3.5.6/Python-3.5.6.tgz
-RUN tar xf Python-3.5.6.tgz
-WORKDIR /src/Python-3.5.6
-RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-loadable-sqlite-extensions && \
-    make -j4 --quiet && \
-    make install && \
-    ldconfig && \
-    rm -rf /src/Python-3.5.6*
-
-# Install Python 3.6 from source
-WORKDIR /src
-RUN curl -O https://www.python.org/ftp/python/3.6.8/Python-3.6.8.tgz
-RUN tar xf Python-3.6.8.tgz
-WORKDIR /src/Python-3.6.8
-RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-loadable-sqlite-extensions && \
-    make -j4 --quiet && \
-    make install && \
-    ldconfig && \
-    rm -rf /src/Python-3.6.8*
-
-# Install Python 3.7 from source
-WORKDIR /src
-RUN curl -O https://www.python.org/ftp/python/3.7.9/Python-3.7.9.tgz
-RUN tar xf Python-3.7.9.tgz
-WORKDIR /src/Python-3.7.9
-RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-loadable-sqlite-extensions && \
-    make -j4 --quiet && \
-    make install && \
-    ldconfig && \
-    rm -rf /src/Python-3.7.9*
-
-# Install Python 3.8 from source
-WORKDIR /src
-RUN curl -O https://www.python.org/ftp/python/3.8.5/Python-3.8.5.tgz
-RUN tar xf Python-3.8.5.tgz
-WORKDIR /src/Python-3.8.5
-RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-loadable-sqlite-extensions && \
-    make -j4 --quiet && \
-    make install && \
-    ldconfig && \
-    rm -rf /src/Python-3.8.5*
+## Install Python 2.7 from source
+#WORKDIR /src
+#RUN curl -O https://www.python.org/ftp/python/2.7.15/Python-2.7.15.tgz
+#RUN tar xf Python-2.7.15.tgz
+#WORKDIR /src/Python-2.7.15
+#RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-loadable-sqlite-extensions && \
+#    make -j4 --quiet && \
+#    make install && \
+#    ldconfig && \
+#    rm -rf /src/Python-2.7.15*
+#
+## Install Python 3.5 from source
+#WORKDIR /src
+#RUN curl -O https://www.python.org/ftp/python/3.5.6/Python-3.5.6.tgz
+#RUN tar xf Python-3.5.6.tgz
+#WORKDIR /src/Python-3.5.6
+#RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-loadable-sqlite-extensions && \
+#    make -j4 --quiet && \
+#    make install && \
+#    ldconfig && \
+#    rm -rf /src/Python-3.5.6*
+#
+## Install Python 3.6 from source
+#WORKDIR /src
+#RUN curl -O https://www.python.org/ftp/python/3.6.8/Python-3.6.8.tgz
+#RUN tar xf Python-3.6.8.tgz
+#WORKDIR /src/Python-3.6.8
+#RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-loadable-sqlite-extensions && \
+#    make -j4 --quiet && \
+#    make install && \
+#    ldconfig && \
+#    rm -rf /src/Python-3.6.8*
+#
+## Install Python 3.7 from source
+#WORKDIR /src
+#RUN curl -O https://www.python.org/ftp/python/3.7.9/Python-3.7.9.tgz
+#RUN tar xf Python-3.7.9.tgz
+#WORKDIR /src/Python-3.7.9
+#RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-loadable-sqlite-extensions && \
+#    make -j4 --quiet && \
+#    make install && \
+#    ldconfig && \
+#    rm -rf /src/Python-3.7.9*
+#
+## Install Python 3.8 from source
+#WORKDIR /src
+#RUN curl -O https://www.python.org/ftp/python/3.8.5/Python-3.8.5.tgz
+#RUN tar xf Python-3.8.5.tgz
+#WORKDIR /src/Python-3.8.5
+#RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-loadable-sqlite-extensions && \
+#    make -j4 --quiet && \
+#    make install && \
+#    ldconfig && \
+#    rm -rf /src/Python-3.8.5*
 
 # Install Python 3.9 from source
 WORKDIR /src
@@ -171,18 +170,18 @@ ENV CXX="/usr/local/bin/g++"
 
 # Install pip and virtualenv
 WORKDIR /src
-RUN curl -O https://bootstrap.pypa.io/pip/2.7/get-pip.py
-RUN python2.7 get-pip.py
-RUN pip2.7 install virtualenv
-RUN python3.5 get-pip.py
-RUN pip3.5 install virtualenv
-RUN python3.6 get-pip.py
-RUN pip3.6 install virtualenv
+#RUN curl -O https://bootstrap.pypa.io/pip/2.7/get-pip.py
+#RUN python2.7 get-pip.py
+#RUN pip2.7 install virtualenv
+#RUN python3.5 get-pip.py
+#RUN pip3.5 install virtualenv
+#RUN python3.6 get-pip.py
+#RUN pip3.6 install virtualenv
 RUN curl -O https://bootstrap.pypa.io/get-pip.py
-RUN python3.7 get-pip.py
-RUN pip3.7 install virtualenv
-RUN python3.8 get-pip.py
-RUN pip3.8 install virtualenv
+#RUN python3.7 get-pip.py
+#RUN pip3.7 install virtualenv
+#RUN python3.8 get-pip.py
+#RUN pip3.8 install virtualenv
 RUN python3.9 get-pip.py
 RUN pip3.9 install virtualenv
 RUN python3.10 get-pip.py
