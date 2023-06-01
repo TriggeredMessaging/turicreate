@@ -49,17 +49,17 @@ if [[ -n $PERSIST_TO_REPO_DIR ]]; then
 fi
 
 # Load images from registry if possible
-(docker pull -q ${TC_BUILD_IMAGE_CENTOS6}) || true
-(docker pull -q ${TC_BUILD_IMAGE_1404}) || true
-(docker pull ${TC_BUILD_IMAGE_1804}) || true
+#(docker pull -q ${TC_BUILD_IMAGE_CENTOS6}) || true
+#(docker pull -q ${TC_BUILD_IMAGE_1404}) || true
+#(docker pull ${TC_BUILD_IMAGE_1804}) || true
 
 
 (docker image ls ${TC_BUILD_IMAGE_CENTOS6} | grep turicreate/build-image) || \
 cat scripts/Dockerfile-CentOS-6 | docker build -t ${TC_BUILD_IMAGE_CENTOS6} -
 
 
-(docker image ls ${TC_BUILD_IMAGE_1404} | grep turicreate/build-image) || \
-cat scripts/Dockerfile-Ubuntu-14.04 | docker build -t ${TC_BUILD_IMAGE_1404} -
+#(docker image ls ${TC_BUILD_IMAGE_1404} | grep turicreate/build-image) || \
+#cat scripts/Dockerfile-Ubuntu-14.04 | docker build -t ${TC_BUILD_IMAGE_1404} -
 
 
 # Save images back to repo directory so they can be re-used the next time this script is run.
