@@ -48,6 +48,8 @@ print_help() {
   echo
   echo "  --docker-python3.9       Use docker to build for Python 3.9 in CentOS 6 with Clang 8."
   echo
+  echo "  --docker-python3.10       Use docker to build for Python 3.10 in CentOS 6 with Clang 8."
+  echo
   echo "  --num_procs=n            Specify the number of proceses to run in parallel."
   echo
   echo "  --target-dir=[dir]       The directory where the wheel and associated files are put."
@@ -76,6 +78,7 @@ while [ $# -gt 0 ]
     --docker-python3.7)     USE_DOCKER=1;DOCKER_PYTHON=3.7;;
     --docker-python3.8)     USE_DOCKER=1;DOCKER_PYTHON=3.8;;
     --docker-python3.9)     USE_DOCKER=1;DOCKER_PYTHON=3.9;;
+    --docker-python3.10)     USE_DOCKER=1;DOCKER_PYTHON=3.10;;
     --help)                 print_help ;;
     *) unknown_option $1 ;;
   esac
@@ -389,7 +392,7 @@ function package_wheel() {
   }
 
   # Run the setup
-  package_wheel_helper 0 ""
+  #package_wheel_helper 0 ""
   package_wheel_helper 1 +minimal
 
   echo -e "\n\n================= Done Packaging Wheel  ================\n\n"
