@@ -32,6 +32,7 @@ RUN yum -y update && \
                git \
                file \
                libffi-devel \
+               python3-devel \
                xz
 
 RUN yum install -y wget tar make flex gcc gcc-c++ binutils-devel bzip2
@@ -224,7 +225,6 @@ RUN cmake ../llvm-8.0.0.src/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/
     ldconfig && \
     rm -rf /src/llvm-8.0.0*
 
-RUN yum -y install libjpeg-devel openjpeg2-devel zlib-devel
 
 # Make clang the default compiler
 # To work around https://gcc.gnu.org/bugzilla/show_bug.cgi?id=60367
