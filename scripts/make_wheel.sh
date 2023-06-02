@@ -161,6 +161,7 @@ if [[ -n "${USE_DOCKER}" ]]; then
 fi
 
 yum -y install libjpeg-devel openjpeg2-devel zlib-devel
+python3.10-config --includes
 
 mkdir -p ${TARGET_DIR}
 
