@@ -160,6 +160,8 @@ if [[ -n "${USE_DOCKER}" ]]; then
   exit 0
 fi
 
+yum -y install libjpeg-devel openjpeg2-devel zlib-devel
+
 mkdir -p ${TARGET_DIR}
 
 # Windows specific
