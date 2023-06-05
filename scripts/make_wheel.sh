@@ -160,7 +160,7 @@ if [[ -n "${USE_DOCKER}" ]]; then
   exit 0
 fi
 
-python3.10-config --includes
+#python3.10-config --includes
 
 mkdir -p ${TARGET_DIR}
 
