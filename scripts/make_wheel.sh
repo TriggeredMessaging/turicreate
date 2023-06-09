@@ -77,7 +77,7 @@ while [ $# -gt 0 ]
     --docker-python3.7)     USE_DOCKER=1;DOCKER_PYTHON=3.7;;
     --docker-python3.8)     USE_DOCKER=1;DOCKER_PYTHON=3.8;;
     --docker-python3.9)     USE_DOCKER=1;DOCKER_PYTHON=3.9;;
-    --docker-python3.10)     USE_DOCKER=1;DOCKER_PYTHON=3.10;;
+    --docker-python3.10)     USE_DOCKER=1;DOCKER_PYTHON=3.10; USE_UBUNTU=0;;
     --docker-ubuntu-build)    USE_DOCKER=1;DOCKER_PYTHON=3.10; USE_UBUNTU=1;;
     --help)                 print_help ;;
     *) unknown_option $1 ;;
@@ -100,7 +100,8 @@ if [[ -z "${TARGET_DIR}" ]]; then
   TARGET_DIR=${WORKSPACE}/target
 fi
 
-if [[ -n "${USE_UBUNTU}" ]]; then
+if [[ -z "${USE_UBUNTU}" ]]; then
+  echo "should not be here!!"
   LINUX_BUILD=$(bash $WORKSPACE/scripts/get_docker_image.sh --ubuntu=22.04)
 else
   # The build image version that will be used for building

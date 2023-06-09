@@ -55,12 +55,12 @@ fi
 #(docker pull ${TC_BUILD_IMAGE_1804}) || true
 
 
-#(docker image ls ${TC_BUILD_IMAGE_CENTOS6} | grep turicreate/build-image) || \
-#cat scripts/Dockerfile-CentOS-6 | docker build -t ${TC_BUILD_IMAGE_CENTOS6} -
+(docker image ls ${TC_BUILD_IMAGE_CENTOS6} | grep turicreate/build-image) || \
+cat scripts/Dockerfile-CentOS-6 | docker build -t ${TC_BUILD_IMAGE_CENTOS6} -
 
-(docker image ls ${TC_BUILD_IMAGE_UBUNTU2204} | grep turicreate/build-image) || \
-cat scripts/Dockerfile-Ubuntu-build | docker build -t ${TC_BUILD_IMAGE_UBUNTU2204} -
-
+#(docker image ls ${TC_BUILD_IMAGE_UBUNTU2204} | grep turicreate/build-image) || \
+#cat scripts/Dockerfile-Ubuntu-build | docker build -t ${TC_BUILD_IMAGE_UBUNTU2204} -
+#
 
 #(docker image ls ${TC_BUILD_IMAGE_1404} | grep turicreate/build-image) || \
 #cat scripts/Dockerfile-Ubuntu-14.04 | docker build -t ${TC_BUILD_IMAGE_1404} -
