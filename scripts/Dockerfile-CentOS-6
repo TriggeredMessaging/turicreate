@@ -32,6 +32,7 @@ RUN yum -y update && \
                git \
                file \
                libffi-devel \
+               python-devel \
                python3-devel \
                xz
 

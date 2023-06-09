@@ -11,9 +11,6 @@ SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 WORKSPACE=${SCRIPT_DIR}/..
 build_type="release"
 
-# The build image version that will be used for building
-TC_BUILD_IMAGE_CENTOS_6=$(bash $WORKSPACE/scripts/get_docker_image.sh --centos=6)
-
 unknown_option() {
   echo "Unknown option $1. Exiting."
   exit 1
@@ -59,6 +56,8 @@ print_help() {
   exit 1
 } # end of print help
 
+USE_UBUNTU=0
+
 # command flag options
 # Parse command line configure flags ------------------------------------------
 while [ $# -gt 0 ]
@@ -79,6 +78,7 @@ while [ $# -gt 0 ]
     --docker-python3.8)     USE_DOCKER=1;DOCKER_PYTHON=3.8;;
     --docker-python3.9)     USE_DOCKER=1;DOCKER_PYTHON=3.9;;
     --docker-python3.10)     USE_DOCKER=1;DOCKER_PYTHON=3.10;;
+    --docker-ubuntu-build)    USE_DOCKER=1;DOCKER_PYTHON=3.10; USE_UBUNTU=1;;
     --help)                 print_help ;;
     *) unknown_option $1 ;;
   esac
@@ -99,6 +99,15 @@ fi
 if [[ -z "${TARGET_DIR}" ]]; then
   TARGET_DIR=${WORKSPACE}/target
 fi
+
+if [[ -n "${USE_UBUNTU}" ]]; then
+  LINUX_BUILD=$(bash $WORKSPACE/scripts/get_docker_image.sh --ubuntu=22.04)
+else
+  # The build image version that will be used for building
+  LINUX_BUILD=$(bash $WORKSPACE/scripts/get_docker_image.sh --centos=6)
+fi
+
+echo ${LINUX_BUILD}
 
 # If we are going to run in Docker,
 # send this command into Docker and bail out of here when done.
@@ -130,7 +139,7 @@ if [[ -n "${USE_DOCKER}" ]]; then
   docker run --rm -m=8g \
     --mount type=bind,source=$WORKSPACE,target=/build,consistency=delegated \
     -e "VIRTUALENV=virtualenv --python=python${DOCKER_PYTHON}" \
-    ${TC_BUILD_IMAGE_CENTOS_6} \
+    ${LINUX_BUILD} \
     /build/scripts/make_wheel.sh \
     $make_wheel_args
 
@@ -139,7 +148,7 @@ if [[ -n "${USE_DOCKER}" ]]; then
   docker run --rm -m=4g \
     --mount type=bind,source=$WORKSPACE,target=/build,consistency=delegated \
     -e "VIRTUALENV=virtualenv --python=python${DOCKER_PYTHON}" \
-    ${TC_BUILD_IMAGE_CENTOS_6} \
+    ${LINUX_BUILD} \
     rm -rf /build/deps/env
 
   # Run the tests inside Docker (14.04) if desired
@@ -154,7 +163,7 @@ if [[ -n "${USE_DOCKER}" ]]; then
   docker run --rm -m=4g \
     --mount type=bind,source=$WORKSPACE,target=/build,consistency=delegated \
     -e "VIRTUALENV=virtualenv --python=python${DOCKER_PYTHON}" \
-    ${TC_BUILD_IMAGE_CENTOS_6} \
+    ${LINUX_BUILD} \
     rm -rf /build/deps/env
 
   exit 0

@@ -1,0 +1,114 @@
+FROM ubuntu:jammy
+
+# Prevent apt-get from asking questions and expecting answers
+ENV DEBIAN_FRONTEND noninteractive
+
+ENV CC="gcc"
+ENV CXX="g++"
+ENV PATH="/opt/rh/devtoolset-8/root/usr/bin:/usr/local/bin:${PATH}"
+ENV CCACHE_DIR=/build/.docker_ccache
+ENV CCACHE_COMPILERCHECK=content
+RUN ldconfig
+
+# Update package database
+RUN apt-get update
+
+# Upgrade all possible packages
+RUN apt-get -y upgrade
+
+RUN apt-get -y install  vim-common libx11-dev libsqlite3-dev \
+#               glibc-devel \ part of jammy? \
+#               build-essential \
+               ccache \
+               tk-dev \
+               patch \
+               rsync \
+               git \
+               file \
+               libffi-dev \
+               xz-utils \
+               python3-dev \
+               curl
+
+
+RUN apt-get -y install wget tar make binutils-dev bzip2 flex libssl-dev
+
+#ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+#RUN mkdir /src
+#WORKDIR /src
+#RUN wget ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.8.5/gcc-4.8.5.tar.gz
+#RUN tar xzf gcc-4.8.5.tar.gz
+#WORKDIR gcc-4.8.5
+#RUN ./contrib/download_prerequisites
+#WORKDIR ..
+#RUN mkdir build
+#WORKDIR build
+#RUN ../gcc-4.8.5/configure --enable-languages=c,c++ --disable-checking --disable-multilib --disable-bootstrap
+#RUN make -j16
+#RUN make install
+
+#RUN mkdir install_g++-4.8
+#RUN cd install_g++-4.8/
+#RUN apt update
+#RUN wget http://mirrors.kernel.org/ubuntu/pool/universe/g/gcc-4.8/g++-4.8_4.8.5-4ubuntu8_amd64.deb
+#RUN wget http://mirrors.kernel.org/ubuntu/pool/universe/g/gcc-4.8/libstdc++-4.8-dev_4.8.5-4ubuntu8_amd64.deb
+#RUN wget http://mirrors.kernel.org/ubuntu/pool/universe/g/gcc-4.8/gcc-4.8-base_4.8.5-4ubuntu8_amd64.deb
+#RUN wget http://mirrors.kernel.org/ubuntu/pool/universe/g/gcc-4.8/gcc-4.8_4.8.5-4ubuntu8_amd64.deb
+#RUN wget http://mirrors.kernel.org/ubuntu/pool/universe/g/gcc-4.8/libgcc-4.8-dev_4.8.5-4ubuntu8_amd64.deb
+#RUN wget http://mirrors.kernel.org/ubuntu/pool/universe/g/gcc-4.8/cpp-4.8_4.8.5-4ubuntu8_amd64.deb
+#RUN wget http://mirrors.kernel.org/ubuntu/pool/universe/g/gcc-4.8/libasan0_4.8.5-4ubuntu8_amd64.deb
+#RUN apt install ./gcc-4.8_4.8.5-4ubuntu8_amd64.deb ./gcc-4.8-base_4.8.5-4ubuntu8_amd64.deb ./libstdc++-4.8-dev_4.8.5-4ubuntu8_amd64.deb ./cpp-4.8_4.8.5-4ubuntu8_amd64.deb ./libgcc-4.8-dev_4.8.5-4ubuntu8_amd64.deb ./libasan0_4.8.5-4ubuntu8_amd64.deb ./g++-4.8_4.8.5-4ubuntu8_amd64.deb
+
+RUN mkdir -p /opt
+WORKDIR /opt
+RUN curl -O https://cmake.org/files/v3.15/cmake-3.15.7-Linux-x86_64.tar.gz
+RUN tar xf cmake-3.15.7-Linux-x86_64.tar.gz && \
+    rm -rf /opt/cmake-3.15.7-Linux-x86_64.tar.gz
+ENV PATH="/opt/cmake-3.15.7-Linux-x86_64/bin:${PATH}"
+
+# Install Python 3.10 from source
+WORKDIR /src
+RUN curl -O https://www.python.org/ftp/python/3.10.11/Python-3.10.11.tgz
+RUN tar xf Python-3.10.11.tgz
+WORKDIR /src/Python-3.10.11
+RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-loadable-sqlite-extensions && \
+    make -j4 --quiet && \
+    make install && \
+    ldconfig && \
+    rm -rf /src/Python-3.10.11*
+
+ENV CC="/usr/local/bin/gcc"
+ENV CXX="/usr/local/bin/g++"
+
+WORKDIR /src
+RUN curl -O https://bootstrap.pypa.io/get-pip.py
+
+RUN python3.10 get-pip.py
+RUN pip3.10 install virtualenv
+RUN rm -rf /src/get-pip.py
+
+ENV LD="/usr/local/lib64"
+
+#RUN mkdir -p /usr/libexec/gcc/x86_64-redhat-linux/4.8.5
+#RUN mkdir -p /usr/include/c++/4.8.5
+#RUN mkdir -p /usr/lib/gcc/x86_64-redhat-linux/4.8.5
+#
+#RUN cp -a /usr/local/libexec/gcc/x86_64-unknown-linux-gnu/4.8.5/* /usr/libexec/gcc/x86_64-redhat-linux/4.8.5/
+#RUN cp -a /usr/local/include/c++/4.8.5/* /usr/include/c++/4.8.5/
+#RUN cp -a /usr/local/lib/gcc/x86_64-unknown-linux-gnu/4.8.5/* /usr/lib/gcc/x86_64-redhat-linux/4.8.5/
+#RUN cp -a /usr/local/lib64/* /usr/lib/gcc/x86_64-redhat-linux/4.8.5/
+
+ENV CC="clang"
+ENV CXX="clang++"
+
+# Start at repo root (mounted into Docker)
+WORKDIR /build
+
+# Set ccache size to 4GB
+RUN mkdir -p $CCACHE_DIR
+RUN ccache -M 4G
+
+# Clean up now-unnecessary paths in image
+RUN rm -rf /src
+
+WORKDIR /build/
