@@ -35,11 +35,11 @@ function linux_patch_sigfpe_handler {
 }
 
 $PIP install --upgrade "pip"
-if [[ "$USE_MINIMAL" -eq 1  ]]; then
-  $PIP install -r scripts/requirements-minimal.txt --prefer-binary  --use-feature=2020-resolver
-else
-  $PIP install -r scripts/requirements.txt --prefer-binary  --use-feature=2020-resolver
-fi
+#if [[ "$USE_MINIMAL" -eq 1  ]]; then
+$PIP install -r scripts/requirements-minimal.txt --prefer-binary  #--use-feature=2020-resolver
+#else
+#  $PIP install -r scripts/requirements.txt --prefer-binary  --use-feature=2020-resolver
+#fi
 
 # install pre-commit hooks for git
 with_pre_commit=${with_pre_commit:-0}

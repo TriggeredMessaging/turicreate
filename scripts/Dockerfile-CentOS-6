@@ -7,7 +7,7 @@
 # Builds against libstdc++ from GCC 4.8 for compatibility with older libstdc++
 # runtime versions.
 
-FROM quay.io/pypa/manylinux2010_x86_64
+FROM quay.io/pypa/manylinux2014_x86_64
 
 # Set env variables for tools to pick up
 ENV CC="gcc"
@@ -24,7 +24,7 @@ RUN yum -y update && \
                libX11-devel \
                sqlite-devel \
                gcc \
-               gcc-multilib \
+  #             gcc-multilib \
                glibc-devel \
                ccache \
                tk-devel \
@@ -32,9 +32,11 @@ RUN yum -y update && \
                rsync \
                git \
                file \
+               libffi-devel \
+               python3-devel \
                xz
 
-RUN yum install -y wget tar make flex gcc gcc-c++ gcc-devel.s390 binutils-devel bzip2
+RUN yum install -y wget tar make flex gcc gcc-c++ binutils-devel bzip2
 ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 RUN mkdir /src
 WORKDIR /src
@@ -78,71 +80,71 @@ RUN tar xf cmake-3.13.4-Linux-x86_64.tar.gz && \
 ENV PATH="/opt/cmake-3.13.4-Linux-x86_64/bin:${PATH}"
 
 # Install libffi from source
-RUN mkdir -p /src
-WORKDIR /src
-RUN curl -O ftp://sourceware.org/pub/libffi/libffi-3.2.1.tar.gz
-RUN tar xf libffi-3.2.1.tar.gz
-WORKDIR /src/libffi-3.2.1
-RUN ./configure --prefix=/usr/local && \
-    make -j4 --quiet && \
-    make install && \
-    ldconfig && \
-    rm -rf /src/libffi-3.2.1*
+#RUN mkdir -p /src
+#WORKDIR /src
+#RUN curl -O ftp://sourceware.org/pub/libffi/libffi-3.2.1.tar.gz
+#RUN tar xf libffi-3.2.1.tar.gz
+#WORKDIR /src/libffi-3.2.1
+#RUN ./configure --prefix=/usr/local && \
+#    make -j4 --quiet && \
+#    make install && \
+#    ldconfig && \
+#    rm -rf /src/libffi-3.2.1*
 
 # Install Python 2.7 from source
-WORKDIR /src
-RUN curl -O https://www.python.org/ftp/python/2.7.15/Python-2.7.15.tgz
-RUN tar xf Python-2.7.15.tgz
-WORKDIR /src/Python-2.7.15
-RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-loadable-sqlite-extensions && \
-    make -j4 --quiet && \
-    make install && \
-    ldconfig && \
-    rm -rf /src/Python-2.7.15*
-
-# Install Python 3.5 from source
-WORKDIR /src
-RUN curl -O https://www.python.org/ftp/python/3.5.6/Python-3.5.6.tgz
-RUN tar xf Python-3.5.6.tgz
-WORKDIR /src/Python-3.5.6
-RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-loadable-sqlite-extensions && \
-    make -j4 --quiet && \
-    make install && \
-    ldconfig && \
-    rm -rf /src/Python-3.5.6*
-
-# Install Python 3.6 from source
-WORKDIR /src
-RUN curl -O https://www.python.org/ftp/python/3.6.8/Python-3.6.8.tgz
-RUN tar xf Python-3.6.8.tgz
-WORKDIR /src/Python-3.6.8
-RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-loadable-sqlite-extensions && \
-    make -j4 --quiet && \
-    make install && \
-    ldconfig && \
-    rm -rf /src/Python-3.6.8*
-
-# Install Python 3.7 from source
-WORKDIR /src
-RUN curl -O https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tgz
-RUN tar xf Python-3.7.3.tgz
-WORKDIR /src/Python-3.7.3
-RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-loadable-sqlite-extensions && \
-    make -j4 --quiet && \
-    make install && \
-    ldconfig && \
-    rm -rf /src/Python-3.7.3*
-
-# Install Python 3.8 from source
-WORKDIR /src
-RUN curl -O https://www.python.org/ftp/python/3.8.5/Python-3.8.5.tgz
-RUN tar xf Python-3.8.5.tgz
-WORKDIR /src/Python-3.8.5
-RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-loadable-sqlite-extensions && \
-    make -j4 --quiet && \
-    make install && \
-    ldconfig && \
-    rm -rf /src/Python-3.8.5*
+#WORKDIR /src
+#RUN curl -O https://www.python.org/ftp/python/2.7.15/Python-2.7.15.tgz
+#RUN tar xf Python-2.7.15.tgz
+#WORKDIR /src/Python-2.7.15
+#RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-loadable-sqlite-extensions && \
+#    make -j4 --quiet && \
+#    make install && \
+#    ldconfig && \
+#    rm -rf /src/Python-2.7.15*
+#
+## Install Python 3.5 from source
+#WORKDIR /src
+#RUN curl -O https://www.python.org/ftp/python/3.5.6/Python-3.5.6.tgz
+#RUN tar xf Python-3.5.6.tgz
+#WORKDIR /src/Python-3.5.6
+#RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-loadable-sqlite-extensions && \
+#    make -j4 --quiet && \
+#    make install && \
+#    ldconfig && \
+#    rm -rf /src/Python-3.5.6*
+#
+## Install Python 3.6 from source
+#WORKDIR /src
+#RUN curl -O https://www.python.org/ftp/python/3.6.8/Python-3.6.8.tgz
+#RUN tar xf Python-3.6.8.tgz
+#WORKDIR /src/Python-3.6.8
+#RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-loadable-sqlite-extensions && \
+#    make -j4 --quiet && \
+#    make install && \
+#    ldconfig && \
+#    rm -rf /src/Python-3.6.8*
+#
+## Install Python 3.7 from source
+#WORKDIR /src
+#RUN curl -O https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tgz
+#RUN tar xf Python-3.7.3.tgz
+#WORKDIR /src/Python-3.7.3
+#RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-loadable-sqlite-extensions && \
+#    make -j4 --quiet && \
+#    make install && \
+#    ldconfig && \
+#    rm -rf /src/Python-3.7.3*
+#
+## Install Python 3.8 from source
+#WORKDIR /src
+#RUN curl -O https://www.python.org/ftp/python/3.8.5/Python-3.8.5.tgz
+#RUN tar xf Python-3.8.5.tgz
+#WORKDIR /src/Python-3.8.5
+#RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-loadable-sqlite-extensions && \
+#    make -j4 --quiet && \
+#    make install && \
+#    ldconfig && \
+#    rm -rf /src/Python-3.8.5*
 
 # Install Python 3.9 from source
 WORKDIR /src
@@ -156,37 +158,37 @@ RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enab
     rm -rf /src/Python-3.9.5*
 
     # Install Python 3.10 from source
-WORKDIR /src
-RUN curl -O https://www.python.org/ftp/python/3.10.11/Python-3.10.11.tgz
-RUN tar xf Python-3.10.11.tgz
-WORKDIR /src/Python-3.10.11
-RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-loadable-sqlite-extensions && \
-    make -j4 --quiet && \
-    make install && \
-    ldconfig && \
-    rm -rf /src/Python-3.10.11*
+#WORKDIR /src
+#RUN curl -O https://www.python.org/ftp/python/3.10.11/Python-3.10.11.tgz
+#RUN tar xf Python-3.10.11.tgz
+#WORKDIR /src/Python-3.10.11
+#RUN ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-loadable-sqlite-extensions && \
+#    make -j4 --quiet && \
+#    make install && \
+#    ldconfig && \
+#    rm -rf /src/Python-3.10.11*
 
 ENV CC="/usr/local/bin/gcc"
 ENV CXX="/usr/local/bin/g++"
 
 # Install pip and virtualenv
 WORKDIR /src
-RUN curl -O https://bootstrap.pypa.io/pip/2.7/get-pip.py
-RUN python2.7 get-pip.py
-RUN pip2.7 install virtualenv
-RUN python3.5 get-pip.py
-RUN pip3.5 install virtualenv
+#RUN curl -O https://bootstrap.pypa.io/pip/2.7/get-pip.py
+#RUN python2.7 get-pip.py
+#RUN pip2.7 install virtualenv
+#RUN python3.5 get-pip.py
+#RUN pip3.5 install virtualenv
 RUN curl -O https://bootstrap.pypa.io/get-pip.py
-RUN python3.6 get-pip.py
-RUN pip3.6 install virtualenv
-RUN python3.7 get-pip.py
-RUN pip3.7 install virtualenv
-RUN python3.8 get-pip.py
-RUN pip3.8 install virtualenv
+#RUN python3.6 get-pip.py
+#RUN pip3.6 install virtualenv
+#RUN python3.7 get-pip.py
+#RUN pip3.7 install virtualenv
+#RUN python3.8 get-pip.py
+#RUN pip3.8 install virtualenv
 RUN python3.9 get-pip.py
-RUN pip3.9 install virtualenv \
-RUN python3.10 get-pip.py
-RUN pip3.10 install virtualenv
+RUN pip3.9 install virtualenv
+#RUN python3.10 get-pip.py
+#RUN pip3.10 install virtualenv
 RUN rm -rf /src/get-pip.py
 
 ENV LD="/usr/local/lib64"
